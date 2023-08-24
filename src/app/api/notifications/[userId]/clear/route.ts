@@ -8,6 +8,7 @@ export async function PATCH(_: Request, context: { params: any }) {
         if (!userId || typeof userId !== "string") {
             throw new Error("Invalid ID");
         }
+console.log(userId);
 
         await prisma.user.update({
             where: {

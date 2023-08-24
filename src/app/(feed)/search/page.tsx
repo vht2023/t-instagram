@@ -8,13 +8,12 @@ import { useState } from "react";
 import classNames from "classnames";
 import useUsers from "@/hooks/useUsers";
 import { HiOutlineUserCircle } from "react-icons/hi";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 export default function Profile() {
     const [viewState, setViewState] = useState<string>("POSTS");
     const { data: allUsers } = useUsers();
-    const currentUser = JSON.parse(
-        localStorage.getItem("currentUser") as string
-    );
+    const { data: currentUser} = useCurrentUser();
 
     const otherUsers =
         allUsers && allUsers?.filter((user: any) => user.id !== currentUser.id);

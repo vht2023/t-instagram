@@ -2,7 +2,6 @@ import prisma from "@/app/libs/prismadb";
 import { NextResponse } from "next/server";
 import serverAuth from "@/app/libs/serverAuth";
 import { pusherServer } from "@/app/libs/pusher";
-import { toPusherKey } from "@/app/libs/utils";
 
 export async function PATCH(request: Request) {
     try {

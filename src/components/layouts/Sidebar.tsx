@@ -46,6 +46,7 @@ const Sidebar = ({
             await axios.patch(`/api/notifications/${currentUser?.id}/clear`);
             await mutateFetchedCurentUser();
         }
+        axios.patch(`/api/notifications/${currentUser?.id}/clear`);
     };
 
     useEffect(() => {
@@ -311,25 +312,13 @@ const Sidebar = ({
                             </div>
                             <RiLogoutCircleRLine
                                 className="hidden cursor-pointer desktop:block text-[18px] hover:text-[20px] transition-all delay-75 duration-75"
-                                onClick={() => {
-                                    signOut();
-                                    localStorage.setItem(
-                                        "currentUser",
-                                        JSON.stringify(null)
-                                    );
-                                }}
+                                onClick={() => signOut()}
                             />
                         </Link>
                         <div className="desktop:hidden w-full flex-1 flex flex-col justify-end cursor-pointer text-[20px]">
                             <RiLogoutCircleRLine
                                 className="w-full"
-                                onClick={() => {
-                                    signOut();
-                                    localStorage.setItem(
-                                        "currentUser",
-                                        JSON.stringify(null)
-                                    );
-                                }}
+                                onClick={() => signOut()}
                             />
                         </div>
                     </div>

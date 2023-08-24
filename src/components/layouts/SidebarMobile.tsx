@@ -49,13 +49,7 @@ const SidebarMobile = ({ currentUser }: { currentUser: any }) => {
                 <div className="cursor-pointer menu-item">
                     <RiLogoutCircleRLine
                         className="text-2xl"
-                        onClick={() => {
-                            signOut();
-                            localStorage.setItem(
-                                "currentUser",
-                                JSON.stringify(null)
-                            );
-                        }}
+                        onClick={() => signOut()}
                     />
                 </div>
             </div>

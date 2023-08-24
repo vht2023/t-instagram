@@ -17,10 +17,6 @@ export default function Feed() {
     const { data: currentUser } = useCurrentUser();
     const { data: postsData, mutate: mutateFetchedPosts } = useFeedPosts();
 
-    if (currentUser) {
-        localStorage.setItem("currentUser", JSON.stringify(currentUser));
-    }
-
     if (!currentUser || !postsData) {
         return (
             <div className="flex justify-center items-center w-full h-full">
