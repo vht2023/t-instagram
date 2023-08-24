@@ -11,7 +11,7 @@ const HeaderMobile = () => {
             <div className="flex-1">
                 <Link href="/" className="block w-[120px]">
                     <Image
-                        src="/images/t-instagram-logo.png"
+                        src="https://console.cloudinary.com/console/c-48f8a028313986fa1c8291b0d1d526/media-explorer?assetId=3e33f27fd82a34543c7a3419cc92eb52"
                         alt="logo"
                         width={120}
                         height={40}

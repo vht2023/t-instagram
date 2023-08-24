@@ -51,7 +51,7 @@ const Login: React.FC = () => {
             className="flex justify-center items-center border border-stone-700/20 p-8 flex-col"
         >
             <Image
-                src="/images/t-instagram-logo.png"
+                src="https://res.cloudinary.com/dgn01fb11/image/upload/v1692870231/frbsmzoswq6uhj7ousxe.png"
                 width={200}
                 height={200}
                 alt="logo"
