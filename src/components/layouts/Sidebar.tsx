@@ -46,7 +46,6 @@ const Sidebar = ({
             await axios.patch(`/api/notifications/${currentUser?.id}/clear`);
             await mutateFetchedCurentUser();
         }
-        axios.patch(`/api/notifications/${currentUser?.id}/clear`);
     };
 
     useEffect(() => {
@@ -57,10 +56,8 @@ const Sidebar = ({
         }
 
         pusherClient.subscribe("follow_notifications");
-        console.log("listening to follow_notifications");
 
         const getNotifications = async ({ userId }: any) => {
-            console.log("Function got called");
             if (userId === currentUser.id) {
                 setHasNotifications(true);
             }
