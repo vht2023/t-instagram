@@ -12,7 +12,7 @@ export async function POST(request: Request) {
             data: {
                 caption,
                 mediaUrl,
-                authorId: currentUser.id,
+                authorId: currentUser?.id,
             },
         });
 

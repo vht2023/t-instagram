@@ -23,7 +23,7 @@ export async function PATCH(request: Request) {
             },
             data: {
                 waitingFollowerIds: userTarget.waitingFollowerIds.filter(
-                    (id) => id !== currentUser.id
+                    (id) => id !== currentUser?.id
                 ),
             },
         });

@@ -19,11 +19,11 @@ export async function PATCH(request: Request) {
 
         await prisma.user.update({
             where: {
-                id: currentUser.id,
+                id: currentUser?.id,
             },
             data: {
-                followerIds: currentUser.followerIds.concat(idUserRequest),
-                waitingFollowerIds: currentUser.waitingFollowerIds.filter(id => id !== idUserRequest),
+                followerIds: currentUser?.followerIds.concat(idUserRequest),
+                waitingFollowerIds: currentUser?.waitingFollowerIds.filter(id => id !== idUserRequest),
             },
         });
 
@@ -32,7 +32,7 @@ export async function PATCH(request: Request) {
                 id: userRequest.id,
             },
             data: {
-                followingIds: userRequest.followingIds.concat(currentUser.id),
+                followingIds: userRequest.followingIds.concat(currentUser?.id),
                 hasNotification: true,
             },
         });
@@ -40,10 +40,10 @@ export async function PATCH(request: Request) {
         await prisma.notification.create({
             data: {
                 body: "has accepted your follow request.",
-                link: `/user/${currentUser.id}`,
-                mediaUrl: currentUser.image,
+                link: `/user/${currentUser?.id}`,
+                mediaUrl: currentUser?.image,
                 userId: userRequest.id,
-                username: currentUser.username,
+                username: currentUser?.username,
             },
         });
 
@@ -51,7 +51,7 @@ export async function PATCH(request: Request) {
             "follow_notifications",
             "follow_request",
             {
-                link: `/user/${currentUser.id}`,
+                link: `/user/${currentUser?.id}`,
                 userId: userRequest.id,
                 messages: "New Notifications",
             }

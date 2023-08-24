@@ -10,10 +10,10 @@ export async function PATCH(request: Request) {
 
         await prisma.user.update({
             where: {
-                id: currentUser.id,
+                id: currentUser?.id,
             },
             data: {
-                followingIds: currentUser.followingIds.filter(id => id !== idUserTarget),
+                followingIds: currentUser?.followingIds.filter(id => id !== idUserTarget),
             },
         });
 
@@ -31,7 +31,7 @@ export async function PATCH(request: Request) {
                 id: idUserTarget,
             },
             data: {
-                followerIds: targetUser.followerIds.filter(id => id !== currentUser.id),
+                followerIds: targetUser.followerIds.filter(id => id !== currentUser?.id),
             },
         });
 

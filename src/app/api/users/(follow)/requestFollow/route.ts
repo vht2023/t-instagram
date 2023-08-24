@@ -25,26 +25,26 @@ export async function PATCH(request: Request) {
                 },
                 data: {
                     waitingFollowerIds: targetUser.waitingFollowerIds.concat(
-                        currentUser.id
+                        currentUser?.id
                     ),
                 },
             });
             await prisma.notification.create({
                 data: {
                     body: "requested to follow you.",
-                    link: `/user/${currentUser.id}`,
-                    mediaUrl: currentUser.image,
+                    link: `/user/${currentUser?.id}`,
+                    mediaUrl: currentUser?.image,
                     userId: targetUser.id,
-                    username: currentUser.username,
+                    username: currentUser?.username,
                 },
             });
         } else {
             await prisma.user.update({
                 where: {
-                    id: currentUser.id,
+                    id: currentUser?.id,
                 },
                 data: {
-                    followingIds: currentUser.followingIds.concat(idUserTarget),
+                    followingIds: currentUser?.followingIds.concat(idUserTarget),
                 },
             });
             await prisma.user.update({
@@ -52,23 +52,23 @@ export async function PATCH(request: Request) {
                     id: idUserTarget,
                 },
                 data: {
-                    followerIds: targetUser.followerIds.concat(currentUser.id),
+                    followerIds: targetUser.followerIds.concat(currentUser?.id),
                 },
             });
             await prisma.notification.create({
                 data: {
                     body: "followed you.",
-                    link: `/user/${currentUser.id}`,
-                    mediaUrl: currentUser.image,
+                    link: `/user/${currentUser?.id}`,
+                    mediaUrl: currentUser?.image,
                     userId: targetUser.id,
-                    username: currentUser.username,
+                    username: currentUser?.username,
                 },
             });
             await pusherServer.trigger(
                 "follow_notifications",
                 "follow_request",
                 {
-                    link: `/user/${currentUser.id}`,
+                    link: `/user/${currentUser?.id}`,
                     userId: targetUser.id,
                     messages: "New Notifications",
                 }

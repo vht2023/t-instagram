@@ -8,11 +8,9 @@ export async function PATCH(request: Request) {
 
         const { name, userName, bio, profileImage, isPrivate } = await request.json();
 
-        console.log(currentUser);
-        console.log(name);
         const updatedUser = await prisma.user.update({
             where: {
-                id: currentUser.id,
+                id: currentUser?.id,
             },
             data: {
                 name,
