@@ -35,10 +35,10 @@ export default function Feed() {
 
     return (
         <div className="hidden-scrollbar px-10 py-20 tablet:py-10 h-full flex justify-center overflow-y-auto">
-            <div className="flex flex-col">
+            <div className="grid grid-cols-1 gap-4">
                 {postsData.map((post: any) => (
                     <div
-                        className="w-[480px] min-w-[480px] h-full flex flex-col gap-4"
+                        className="w-[480px] min-w-[480px] flex flex-col gap-4"
                         key={post.id}
                     >
                         <div className="flex justify-between items-center">
@@ -72,12 +72,13 @@ export default function Feed() {
                             </div>
                             <BsThreeDots className="cursor-pointer text-lg" />
                         </div>
-                        <div className="rounded-lg relative w-full h-[650px] max-h-[650px]">
+                        <div className="rounded-lg w-[480px]">
                             <Image
                                 src={post?.mediaUrl ?? ""}
                                 alt="img-post"
                                 className="rounded-lg object-cover"
-                                fill
+                                width={480}
+                                height={650}
                             />
                         </div>
                         <div className="flex justify-between items-center">

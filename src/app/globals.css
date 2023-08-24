@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-.sidebar .menu-item:hover > span {
-    font-weight: 700;
-}
-
-body::-webkit-scrollbar, .hidden-scrollbar::-webkit-scrollbar {
+.hidden-scrollbar::-webkit-scrollbar {
     display: none;
 }
 
-body::-webkit-scrollbar, .hidden-scrollbar::-webkit-scrollbar {
+.hidden-scrollbar::-webkit-scrollbar {
     width: 0 !important;
+}
+
+.post-hover:hover > div {
+    display: flex;
 }

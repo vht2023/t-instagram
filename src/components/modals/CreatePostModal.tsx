@@ -123,7 +123,7 @@ const CreatePostModal: React.FC<PropsType> = ({
                                 )}
                             </div>
                         </div>
-                        <div className="basis-1/2 p-4">
+                        <div className="basis-1/2 p-4 border-l">
                             <div className="flex gap-4 items-center">
                                 <div className="relative rounded-full w-[40px] h-[40px]">
                                     <Image

@@ -13,6 +13,8 @@ import { LiaUserAltSolid } from "react-icons/lia";
 import axios from "axios";
 import toast from "react-hot-toast";
 import useUserPost from "@/hooks/useUserPost";
+import { AiFillHeart } from "react-icons/ai";
+import { FaCommentAlt } from "react-icons/fa";
 
 export enum ViewState {
     POSTS = "POSTS",
@@ -332,11 +334,9 @@ export default function Profile() {
         }
     };
 
-    console.log(userPosts);
-
     return (
         <>
-            <div className="flex flex-col w-full h-full overflow-y-auto overflow-x-hidden">
+            <div className="flex flex-col tablet:w-[650px] tablet:max-w-[650px] desktop:w-[908px] desktop:max-w-[908px] overflow-x-hidden">
                 <div className="flex justify-center desktop:gap-40 tablet:gap-20">
                     {userData.image ? (
                         <div className="relative w-[150px] h-[150px] max-w-[150px] max-h-[150px] rounded-full">
@@ -388,13 +388,16 @@ export default function Profile() {
                     </div>
                 </div>
                 <div className="border-b w-full h-[1px] mt-12" />
-                <div className="flex justify-center items-center gap-10 text-sm text-zinc-500 cursor-pointer font-medium">
+                <div className="flex justify-center items-center gap-10 text-sm text-zinc-500 font-medium">
                     <span
                         onClick={() => setViewState(ViewState.POSTS)}
-                        className={classNames("hover:text-black py-4 px-2", {
-                            ["text-black border-t-2 border-black"]:
-                                viewState === ViewState.POSTS,
-                        })}
+                        className={classNames(
+                            "hover:text-black py-4 px-2 cursor-pointer",
+                            {
+                                ["text-black border-t-2 border-black"]:
+                                    viewState === ViewState.POSTS,
+                            }
+                        )}
                     >
                         POSTS
                     </span>
@@ -436,7 +439,40 @@ export default function Profile() {
                         <span className="sr-only">Loading...</span>
                     </div>
                 ) : userPosts?.length > 0 ? (
-                    <div>USER POST</div>
+                    <div className="w-full h-full">
+                        <div className="grid grid-cols-3 gap-1 w-full h-full overflow-x-hidden">
+                            {userPosts &&
+                                userPosts.map((post: any) => (
+                                    <div
+                                        key={post.id}
+                                        className="relative tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px]"
+                                    >
+                                        <div className="post-hover cursor-pointer absolute top-0 left-0 z-10 hover:bg-gray-700/30 flex gap-6 justify-center items-center tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px]">
+                                            <div className="hidden z-10 hover:flex justify-center items-center">
+                                                <AiFillHeart className="text-white text-2xl" />
+                                                <span className="ml-1 text-white text-xl font-semibold">
+                                                    {post.comments.length}
+                                                </span>
+                                            </div>
+                                            <div className="hidden z-10 hover:flex justify-center items-center">
+                                                <FaCommentAlt className="text-white text-[20px]" />
+                                                <span className="ml-1 text-white text-xl font-semibold">
+                                                    {post.likes.length}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="relative tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px]">
+                                            <Image
+                                                src={post.mediaUrl}
+                                                alt="post-img"
+                                                objectFit="cover"
+                                                fill
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
                 ) : (
                     <div className="mt-10 flex flex-col justify-center items-center gap-6">
                         <VscDebug className="text-6xl" />

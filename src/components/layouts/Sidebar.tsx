@@ -1,10 +1,10 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AiFillHome } from "react-icons/ai";
+import { AiOutlineHome } from "react-icons/ai";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
 import { CgAddR } from "react-icons/cg";
@@ -14,41 +14,102 @@ import { MdOutlineExplore, MdOndemandVideo } from "react-icons/md";
 import { FiHeart } from "react-icons/fi";
 import CreatePostModal from "../modals/CreatePostModal";
 import { LiaUserAltSolid } from "react-icons/lia";
+import NotificationsModal from "../modals/NotificationsModal";
+import axios from "axios";
+import { pusherClient } from "@/app/libs/pusher";
 
-const Sidebar = ({ currentUser }: { currentUser: any }) => {
+const Sidebar = ({
+    currentUser,
+    mutateFetchedCurentUser,
+}: {
+    currentUser: any;
+    mutateFetchedCurentUser: any;
+}) => {
+    const menuNotiRef = useRef<any>(null);
     const pathname = usePathname();
     const [openCreatePostModal, setOpenCreatePostModal] =
         useState<boolean>(false);
+    const [openNotificationsModal, setOpenNotificationsModal] =
+        useState<boolean>(false);
+    const [hasNotifications, setHasNotifications] = useState<boolean>(false);
+
+    const getActive = (url: string): boolean => {
+        if (pathname === url && !openCreatePostModal && !openNotificationsModal)
+            return true;
+        return false;
+    };
+
+    const handleClickNotification = async () => {
+        setOpenNotificationsModal(!openNotificationsModal);
+        if (!openNotificationsModal && currentUser?.hasNotification) {
+            setHasNotifications(false);
+            await axios.patch(`/api/notifications/${currentUser?.id}/clear`);
+            await mutateFetchedCurentUser();
+        }
+    };
+
+    useEffect(() => {
+        if (currentUser?.hasNotification) {
+            setHasNotifications(true);
+        } else {
+            setHasNotifications(false);
+        }
+
+        pusherClient.subscribe("follow_notifications");
+        console.log("listening to follow_notifications");
+
+        const getNotifications = async ({ userId }: any) => {
+            console.log("Function got called");
+            if (userId === currentUser.id) {
+                setHasNotifications(true);
+            }
+        };
+
+        pusherClient.bind("follow_request", getNotifications);
+
+        return () => {
+            pusherClient.unsubscribe("follow_notifications");
+            pusherClient.unbind("follow_request", getNotifications);
+        };
+    }, [currentUser]);
 
     return (
         <>
-            <div className="h-full w-[100px] desktop:w-72 desktop:min-w-72 p-6 sidebar">
-                <div className="h-full w-full flex flex-col gap-4">
-                    <Link href="/" className="w-full my-4 text-center">
+            <div className="border-r fixed left-0 top-0 bottom-0 z-10 h-full w-[80px] desktop:w-72 desktop:min-w-72 p-4 bg-white">
+                <div className="h-full w-full flex flex-col gap-4 desktop:px-2">
+                    <Link
+                        href="/"
+                        className="w-full text-center my-4 desktop:mt-0"
+                    >
                         <Image
                             src="/images/t-instagram-logo.png"
                             alt="logo"
-                            width={160}
+                            width={140}
                             height={40}
-                            className="hidden desktop:block my-4"
+                            className="hidden desktop:block mt-4 desktop:ml-2"
                             layout="fit"
                         />
                         <span className="desktop:hidden text-3xl text-red-500 font-bold">
                             T
                         </span>
                     </Link>
-                    <div className="hidden-scrollbar flex flex-col gap-7 desktop:mt-10 mt-6 h-full overflow-y-auto">
+                    <div className="hidden-scrollbar flex flex-col gap-2 mt-2 h-full overflow-y-auto">
                         <Link
                             href="/"
-                            className="cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item"
+                            className={classNames(
+                                "cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item hover:bg-zinc-400/10 rounded-md p-2",
+                                {
+                                    ["bg-zinc-400/10 "]: getActive("/"),
+                                }
+                            )}
                         >
-                            <AiFillHome className="desktop:text-3xl text-xl" />
+                            <AiOutlineHome className="desktop:text-3xl text-2xl" />
                             <span
                                 className={classNames(
-                                    "hidden desktop:inline hover:font-bold transition-all delay-75 duration-75 text-base",
+                                    "hidden desktop:inline transition-all delay-75 duration-75 text-[15px]",
                                     {
-                                        ["font-bold"]: pathname === "/",
-                                        ["font-normal"]: pathname !== "/",
+                                        ["font-bold "]: getActive("/"),
+                                        ["font-normal"]: !getActive("/"),
                                     }
                                 )}
                             >
@@ -57,26 +118,39 @@ const Sidebar = ({ currentUser }: { currentUser: any }) => {
                         </Link>
                         <Link
                             href="/search"
-                            className="cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item"
+                            className={classNames(
+                                "cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item hover:bg-zinc-400/10 rounded-md p-2",
+                                {
+                                    ["bg-zinc-400/10 "]: getActive("/search"),
+                                }
+                            )}
                         >
-                            <BiSearchAlt className="desktop:text-3xl text-xl" />
+                            <BiSearchAlt className="desktop:text-3xl text-2xl" />
                             <span
                                 className={classNames(
-                                    "hidden desktop:inline hover:font-bold transition-all delay-75 duration-75 text-base",
+                                    "hidden desktop:inline transition-all delay-75 duration-75 text-[15px]",
                                     {
-                                        ["font-bold"]: pathname === "/search",
-                                        ["font-medium"]: pathname !== "/search",
+                                        ["font-bold"]: getActive("/search"),
+                                        ["font-normal"]: !getActive("/search"),
                                     }
                                 )}
                             >
                                 Search
                             </span>
                         </Link>
-                        <div className="cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item">
-                            <MdOutlineExplore className="desktop:text-3xl text-xl" />
+                        <div
+                            className={classNames(
+                                "cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item hover:bg-zinc-400/10 rounded-md p-2",
+                                {
+                                    ["bg-zinc-400/10 "]:
+                                        pathname === "/explore",
+                                }
+                            )}
+                        >
+                            <MdOutlineExplore className="desktop:text-3xl text-2xl" />
                             <span
                                 className={classNames(
-                                    "hidden desktop:inline hover:font-bold transition-all delay-75 duration-75 text-base"
+                                    "hidden desktop:inline transition-all delay-75 duration-75 text-[15px]"
                                     // {
                                     //     ["font-bold"]: pathname === "/",
                                     //     ["font-medium"]: pathname !== "/",
@@ -86,11 +160,18 @@ const Sidebar = ({ currentUser }: { currentUser: any }) => {
                                 Explore
                             </span>
                         </div>
-                        <div className="cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item">
-                            <MdOndemandVideo className="desktop:text-3xl text-xl" />
+                        <div
+                            className={classNames(
+                                "cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item hover:bg-zinc-400/10 rounded-md p-2",
+                                {
+                                    ["bg-zinc-400/10 "]: pathname === "/reels",
+                                }
+                            )}
+                        >
+                            <MdOndemandVideo className="desktop:text-3xl text-2xl" />
                             <span
                                 className={classNames(
-                                    "hidden desktop:inline hover:font-bold transition-all delay-75 duration-75 text-base"
+                                    "hidden desktop:inline transition-all delay-75 duration-75 text-[15px]"
                                     // {
                                     //     ["font-bold"]: pathname === "/",
                                     //     ["font-medium"]: pathname !== "/",
@@ -100,11 +181,19 @@ const Sidebar = ({ currentUser }: { currentUser: any }) => {
                                 Reels
                             </span>
                         </div>
-                        <div className="cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item">
-                            <BiMessageDetail className="desktop:text-3xl text-xl" />
+                        <div
+                            className={classNames(
+                                "cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item hover:bg-zinc-400/10 rounded-md p-2",
+                                {
+                                    ["bg-zinc-400/10 "]:
+                                        pathname === "/messages",
+                                }
+                            )}
+                        >
+                            <BiMessageDetail className="desktop:text-3xl text-2xl" />
                             <span
                                 className={classNames(
-                                    "hidden desktop:inline hover:font-bold transition-all delay-75 duration-75 text-base"
+                                    "hidden desktop:inline transition-all delay-75 duration-75 text-[15px]"
                                     // {
                                     //     ["font-bold"]: pathname === "/",
                                     //     ["font-medium"]: pathname !== "/",
@@ -114,32 +203,53 @@ const Sidebar = ({ currentUser }: { currentUser: any }) => {
                                 Messages
                             </span>
                         </div>
-                        <div className="cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item">
-                            <FiHeart className="desktop:text-3xl text-xl" />
+                        <div
+                            ref={menuNotiRef}
+                            onClick={() => handleClickNotification()}
+                            className={classNames(
+                                "cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item hover:bg-zinc-400/10 rounded-md p-2",
+                                {
+                                    ["bg-zinc-400/10 "]: openNotificationsModal,
+                                }
+                            )}
+                        >
+                            <FiHeart className="desktop:text-3xl text-2xl" />
                             <span
                                 className={classNames(
-                                    "hidden desktop:inline hover:font-bold transition-all delay-75 duration-75 text-base"
-                                    // {
-                                    //     ["font-bold"]: pathname === "/",
-                                    //     ["font-medium"]: pathname !== "/",
-                                    // }
+                                    "hidden desktop:inline transition-all delay-75 duration-75 text-[15px]",
+                                    {
+                                        ["font-bold"]: openNotificationsModal,
+                                        ["font-medium"]:
+                                            !openNotificationsModal,
+                                    }
                                 )}
                             >
                                 Notifications
                             </span>
+                            {hasNotifications && (
+                                <div className="relative flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+                                </div>
+                            )}
                         </div>
                         <div
                             onClick={() => setOpenCreatePostModal(true)}
-                            className="cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item"
+                            className={classNames(
+                                "cursor-pointer flex justify-center desktop:justify-normal items-center gap-4 menu-item hover:bg-zinc-400/10 rounded-md p-2",
+                                {
+                                    ["bg-zinc-400/10 "]: openCreatePostModal,
+                                }
+                            )}
                         >
-                            <CgAddR className="desktop:text-3xl text-xl" />
+                            <CgAddR className="desktop:text-3xl text-2xl" />
                             <span
                                 className={classNames(
-                                    "hidden desktop:inline hover:font-bold transition-all delay-75 duration-75 text-base"
-                                    // {
-                                    //     ["font-bold"]: pathname === "/",
-                                    //     ["font-medium"]: pathname !== "/",
-                                    // }
+                                    "hidden desktop:inline transition-all delay-75 duration-75 text-[15px]",
+                                    {
+                                        ["font-bold"]: openCreatePostModal,
+                                        ["font-medium"]: !openCreatePostModal,
+                                    }
                                 )}
                             >
                                 Create
@@ -149,11 +259,20 @@ const Sidebar = ({ currentUser }: { currentUser: any }) => {
                             href={`/user/${
                                 currentUser ? currentUser.id : "me"
                             }`}
-                            className="cursor-pointer w-full flex desktop:justify-between justify-center items-center  menu-item"
+                            className={classNames(
+                                "cursor-pointer flex justify-center desktop:justify-between w-full items-center gap-4 menu-item hover:bg-zinc-400/10 rounded-md p-2",
+                                {
+                                    ["bg-zinc-400/10 "]: getActive(
+                                        `/user/${
+                                            currentUser ? currentUser.id : "me"
+                                        }`
+                                    ),
+                                }
+                            )}
                         >
                             <div className="flex gap-4 items-center">
                                 {currentUser?.image ? (
-                                    <div className="relative rounded-full desktop:w-[30px] desktop:h-[30px] w-[20px] h-[20px]">
+                                    <div className="relative rounded-full desktop:w-[30px] desktop:h-[30px] w-[24px] h-[24px]">
                                         <Image
                                             src={currentUser?.image ?? ""}
                                             alt="logo"
@@ -168,22 +287,22 @@ const Sidebar = ({ currentUser }: { currentUser: any }) => {
 
                                 <span
                                     className={classNames(
-                                        "hidden desktop:inline hover:font-bold transition-all delay-75 duration-75 text-base",
+                                        "hidden desktop:inline transition-all delay-75 duration-75 text-[15px]",
                                         {
-                                            ["font-bold"]:
-                                                pathname ===
+                                            ["font-bold"]: getActive(
                                                 `/user/${
                                                     currentUser
                                                         ? currentUser.id
                                                         : "me"
-                                                }`,
-                                            ["font-normal"]:
-                                                pathname !==
+                                                }`
+                                            ),
+                                            ["font-normal"]: !getActive(
                                                 `/user/${
                                                     currentUser
                                                         ? currentUser.id
                                                         : "me"
-                                                }`,
+                                                }`
+                                            ),
                                         }
                                     )}
                                 >
@@ -216,6 +335,8 @@ const Sidebar = ({ currentUser }: { currentUser: any }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Modal */}
             {openCreatePostModal && (
                 <CreatePostModal
                     userData={currentUser}
@@ -223,6 +344,13 @@ const Sidebar = ({ currentUser }: { currentUser: any }) => {
                     setOpen={setOpenCreatePostModal}
                 />
             )}
+
+            <NotificationsModal
+                menuNotiRef={menuNotiRef}
+                userData={currentUser}
+                open={openNotificationsModal}
+                setOpen={setOpenNotificationsModal}
+            />
         </>
     );
 };

@@ -1,6 +1,8 @@
 import prisma from "@/app/libs/prismadb";
 import { NextResponse } from "next/server";
 import serverAuth from "@/app/libs/serverAuth";
+import { pusherServer } from "@/app/libs/pusher";
+import { toPusherKey } from "@/app/libs/utils";
 
 export async function PATCH(request: Request) {
     try {
@@ -23,7 +25,18 @@ export async function PATCH(request: Request) {
                     id: idUserTarget,
                 },
                 data: {
-                    waitingFollowerIds: targetUser.waitingFollowerIds.concat(currentUser.id),
+                    waitingFollowerIds: targetUser.waitingFollowerIds.concat(
+                        currentUser.id
+                    ),
+                },
+            });
+            await prisma.notification.create({
+                data: {
+                    body: "requested to follow you.",
+                    link: `/user/${currentUser.id}`,
+                    mediaUrl: currentUser.image,
+                    userId: targetUser.id,
+                    username: currentUser.username,
                 },
             });
         } else {
@@ -43,7 +56,34 @@ export async function PATCH(request: Request) {
                     followerIds: targetUser.followerIds.concat(currentUser.id),
                 },
             });
+            await prisma.notification.create({
+                data: {
+                    body: "followed you.",
+                    link: `/user/${currentUser.id}`,
+                    mediaUrl: currentUser.image,
+                    userId: targetUser.id,
+                    username: currentUser.username,
+                },
+            });
+            await pusherServer.trigger(
+                "follow_notifications",
+                "follow_request",
+                {
+                    link: `/user/${currentUser.id}`,
+                    userId: targetUser.id,
+                    messages: "New Notifications",
+                }
+            );
         }
+
+        await prisma.user.update({
+            where: {
+                id: targetUser.id,
+            },
+            data: {
+                hasNotification: true,
+            },
+        });
 
         return NextResponse.json({ status: 200, data: "OK" });
     } catch (error) {
