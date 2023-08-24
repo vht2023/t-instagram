@@ -1,5 +1,6 @@
 "use client";
 
+export const dynamic = "force-dynamic";
 import moment from "moment";
 import Image from "next/image";
 import { BsDot, BsThreeDots } from "react-icons/bs";
@@ -40,7 +41,10 @@ export default function Feed() {
                         <div className="flex justify-between items-center">
                             <div className="flex gap-1 items-center">
                                 {post?.author?.image ? (
-                                    <Link href={`/user/${post?.author?.id}`} className="relative rounded-full w-[40px] h-[40px] cursor-pointer">
+                                    <Link
+                                        href={`/user/${post?.author?.id}`}
+                                        className="relative rounded-full w-[40px] h-[40px] cursor-pointer"
+                                    >
                                         <Image
                                             src={post?.author?.image ?? ""}
                                             alt="avatar"
@@ -52,7 +56,10 @@ export default function Feed() {
                                 ) : (
                                     <LiaUserAltSolid className="text-[40px] cursor-pointer" />
                                 )}
-                                <Link href={`/user/${post?.author?.id}`} className="text-sm font-semibold ml-2 cursor-pointer">
+                                <Link
+                                    href={`/user/${post?.author?.id}`}
+                                    className="text-sm font-semibold ml-2 cursor-pointer"
+                                >
                                     {post?.author?.username}
                                 </Link>
                                 <BsDot className="text-gray-500 text-[10px]" />
