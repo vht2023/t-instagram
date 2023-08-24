@@ -16,19 +16,6 @@ import useUserPost from "@/hooks/useUserPost";
 import { AiFillHeart } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
 
-export enum ViewState {
-    POSTS = "POSTS",
-    SAVED = "SAVED",
-}
-
-export enum LoadingState {
-    FOLLOW = "POSTS",
-    UNFOLLOW = "UNFOLLOW",
-    CANCEL = "CANCEL",
-    ACCEPT = "ACCEPT",
-    DECLINE = "DECLINE",
-}
-
 export default function Profile() {
     const pathname = usePathname();
     const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
@@ -36,8 +23,8 @@ export default function Profile() {
     const [isWaitingAcceptFollow, setIsWaitingAcceptFollow] = useState(false);
     const [isRequestingFollow, setIsRequestingFollow] = useState(false);
     const [disabledButton, setDisabledButton] = useState(false);
-    const [loading, setLoading] = useState<LoadingState | null>(null);
-    const [viewState, setViewState] = useState<ViewState>(ViewState.POSTS);
+    const [loading, setLoading] = useState<string | null>(null);
+    const [viewState, setViewState] = useState<string>("POSTS");
 
     const { data: currentUser, mutate: mutateFetchedCurentUser } =
         useCurrentUser();
@@ -52,7 +39,7 @@ export default function Profile() {
     const handleFollowUser = async () => {
         if (userData) {
             setDisabledButton(true);
-            setLoading(LoadingState.FOLLOW);
+            setLoading("FOLLOW");
             await axios.patch("/api/users/requestFollow", {
                 idUserTarget: userData?.id,
                 isPrivateUser: userData.isPrivate,
@@ -73,7 +60,7 @@ export default function Profile() {
     const handleUnFollowUser = async () => {
         if (userData) {
             setDisabledButton(true);
-            setLoading(LoadingState.UNFOLLOW);
+            setLoading("UNFOLLOW");
             await axios.patch("/api/users/unfollow", {
                 idUserTarget: userData?.id,
             });
@@ -87,7 +74,7 @@ export default function Profile() {
     const handleAcceptRequestFollow = async () => {
         if (userData) {
             setDisabledButton(true);
-            setLoading(LoadingState.ACCEPT);
+            setLoading("ACCEPT");
             await axios.patch("/api/users/acceptRequest", {
                 idUserRequest: userData?.id,
             });
@@ -102,7 +89,7 @@ export default function Profile() {
     const handleDeclineRequestFollow = async () => {
         if (userData) {
             setDisabledButton(true);
-            setLoading(LoadingState.DECLINE);
+            setLoading("DECLINE");
             await axios.patch("/api/users/declineRequest", {
                 idUserRequest: userData?.id,
             });
@@ -117,7 +104,7 @@ export default function Profile() {
     const handleCancelRequestFollow = async () => {
         if (userData) {
             setDisabledButton(true);
-            setLoading(LoadingState.CANCEL);
+            setLoading("DECLINE");
             await axios.patch("/api/users/cancelRequest", {
                 idUserTarget: userData?.id,
             });
@@ -182,7 +169,7 @@ export default function Profile() {
                         onClick={() => handleAcceptRequestFollow()}
                         className="p-1 rounded-md text-white text-xs font-medium bg-blue-500 hover:bg-blue-600 transition-all delay-75 duration-75"
                     >
-                        {disabledButton && loading === LoadingState.ACCEPT && (
+                        {disabledButton && loading === "ACCEPT" && (
                             <svg
                                 aria-hidden="true"
                                 role="status"
@@ -208,7 +195,7 @@ export default function Profile() {
                         onClick={() => handleDeclineRequestFollow()}
                         className="p-1 rounded-md text-xs font-medium bg-zinc-700/10 hover:bg-zinc-700/20 transition-all delay-75 duration-75"
                     >
-                        {disabledButton && loading === LoadingState.DECLINE && (
+                        {disabledButton && loading === "DECLINE" && (
                             <svg
                                 aria-hidden="true"
                                 role="status"
@@ -251,7 +238,7 @@ export default function Profile() {
                     onClick={() => handleUnFollowUser()}
                     className="p-2 rounded-md text-sm font-medium bg-zinc-700/10 hover:bg-zinc-700/20 transition-all delay-75 duration-75"
                 >
-                    {disabledButton && loading === LoadingState.UNFOLLOW && (
+                    {disabledButton && loading === "UNFOLLOW" && (
                         <svg
                             aria-hidden="true"
                             role="status"
@@ -280,7 +267,7 @@ export default function Profile() {
                     onClick={() => handleCancelRequestFollow()}
                     className="p-2 rounded-md text-white text-sm font-medium bg-red-600 hover:bg-red-700 transition-all delay-75 duration-75"
                 >
-                    {disabledButton && loading === LoadingState.CANCEL && (
+                    {disabledButton && loading === "CANCEL" && (
                         <svg
                             aria-hidden="true"
                             role="status"
@@ -309,7 +296,7 @@ export default function Profile() {
                     onClick={() => handleFollowUser()}
                     className="p-2 rounded-md text-white text-sm font-medium bg-blue-500 hover:bg-blue-600 transition-all delay-75 duration-75"
                 >
-                    {disabledButton && loading === LoadingState.FOLLOW && (
+                    {disabledButton && loading === "FOLLOW" && (
                         <svg
                             aria-hidden="true"
                             role="status"
@@ -390,12 +377,12 @@ export default function Profile() {
                 <div className="border-b w-full h-[1px] mt-12" />
                 <div className="flex justify-center items-center gap-10 text-sm text-zinc-500 font-medium">
                     <span
-                        onClick={() => setViewState(ViewState.POSTS)}
+                        onClick={() => setViewState("POSTS")}
                         className={classNames(
                             "hover:text-black py-4 px-2 cursor-pointer",
                             {
                                 ["text-black border-t-2 border-black"]:
-                                    viewState === ViewState.POSTS,
+                                    viewState === "POSTS",
                             }
                         )}
                     >
@@ -403,12 +390,12 @@ export default function Profile() {
                     </span>
                     {currentUser?.id === userData?.id && (
                         <span
-                            onClick={() => setViewState(ViewState.SAVED)}
+                            onClick={() => setViewState("SAVED")}
                             className={classNames(
                                 "hover:text-black py-4 px-2",
                                 {
                                     ["text-black border-t-2 border-black"]:
-                                        viewState === ViewState.SAVED,
+                                        viewState === "SAVED",
                                 }
                             )}
                         >

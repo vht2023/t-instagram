@@ -9,13 +9,8 @@ import classNames from "classnames";
 import useUsers from "@/hooks/useUsers";
 import { HiOutlineUserCircle } from "react-icons/hi";
 
-export enum ViewState {
-    POSTS = "POSTS",
-    SAVED = "SAVED",
-}
-
 export default function Profile() {
-    const [viewState, setViewState] = useState<ViewState>(ViewState.POSTS);
+    const [viewState, setViewState] = useState<string>("POSTS");
     const { data: allUsers } = useUsers();
     const currentUser = JSON.parse(
         localStorage.getItem("currentUser") as string
