@@ -8,6 +8,6 @@ export async function GET() {
     } catch (error) {
         console.log(error);
 
-        return NextResponse.json({ errorMessage: "Internal server error" });
+        return NextResponse.json({ errorMessage: error });
     }
 }
