@@ -13,7 +13,7 @@ const RightSection = ({ currentUser }: { currentUser: any }) => {
                         <div className="relative rounded-full w-[40px] h-[40px]">
                             <Image
                                 src={currentUser?.image ?? ""}
-                                alt="logo"
+                                alt="avatar"
                                 className="rounded-full"
                                 objectFit="cover"
                                 fill
@@ -45,7 +45,7 @@ const RightSection = ({ currentUser }: { currentUser: any }) => {
                         <div className="relative rounded-full w-[40px] h-[40px]">
                             <Image
                                 src={currentUser?.image ?? ""}
-                                alt="logo"
+                                alt="avatar"
                                 className="rounded-full"
                                 objectFit="cover"
                                 fill
@@ -69,7 +69,7 @@ const RightSection = ({ currentUser }: { currentUser: any }) => {
                         <div className="relative rounded-full w-[40px] h-[40px]">
                             <Image
                                 src={currentUser?.image ?? ""}
-                                alt="logo"
+                                alt="avatar"
                                 className="rounded-full"
                                 objectFit="cover"
                                 fill
@@ -93,7 +93,7 @@ const RightSection = ({ currentUser }: { currentUser: any }) => {
                         <div className="relative rounded-full w-[40px] h-[40px]">
                             <Image
                                 src={currentUser?.image ?? ""}
-                                alt="logo"
+                                alt="avatar"
                                 className="rounded-full"
                                 objectFit="cover"
                                 fill
@@ -117,7 +117,7 @@ const RightSection = ({ currentUser }: { currentUser: any }) => {
                         <div className="relative rounded-full w-[40px] h-[40px]">
                             <Image
                                 src={currentUser?.image ?? ""}
-                                alt="logo"
+                                alt="avatar"
                                 className="rounded-full"
                                 objectFit="cover"
                                 fill
@@ -141,7 +141,7 @@ const RightSection = ({ currentUser }: { currentUser: any }) => {
                         <div className="relative rounded-full w-[40px] h-[40px]">
                             <Image
                                 src={currentUser?.image ?? ""}
-                                alt="logo"
+                                alt="avatar"
                                 className="rounded-full"
                                 objectFit="cover"
                                 fill

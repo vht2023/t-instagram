@@ -128,7 +128,7 @@ const CreatePostModal: React.FC<PropsType> = ({
                                 <div className="relative rounded-full w-[40px] h-[40px]">
                                     <Image
                                         src={userData?.image ?? ""}
-                                        alt="logo"
+                                        alt="avatar"
                                         className="rounded-full"
                                         objectFit="cover"
                                         fill

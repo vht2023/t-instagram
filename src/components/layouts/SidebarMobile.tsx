@@ -37,7 +37,7 @@ const SidebarMobile = ({ currentUser }: { currentUser: any }) => {
                     {currentUser?.image ? (
                         <Image
                             src={currentUser?.image ?? ""}
-                            alt="logo"
+                            alt="avatar"
                             className="rounded-full"
                             objectFit="cover"
                             fill

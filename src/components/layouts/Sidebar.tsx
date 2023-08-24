@@ -80,7 +80,7 @@ const Sidebar = ({
                         className="w-full text-center my-4 desktop:mt-0"
                     >
                         <Image
-                            src="https://console.cloudinary.com/console/c-48f8a028313986fa1c8291b0d1d526/media-explorer?assetId=3e33f27fd82a34543c7a3419cc92eb52"
+                            src="https://res.cloudinary.com/dgn01fb11/image/upload/v1692870231/frbsmzoswq6uhj7ousxe.png"
                             alt="logo"
                             width={140}
                             height={40}
@@ -273,7 +273,7 @@ const Sidebar = ({
                                     <div className="relative rounded-full desktop:w-[30px] desktop:h-[30px] w-[24px] h-[24px]">
                                         <Image
                                             src={currentUser?.image ?? ""}
-                                            alt="logo"
+                                            alt="avatar"
                                             className="rounded-full"
                                             objectFit="cover"
                                             fill
