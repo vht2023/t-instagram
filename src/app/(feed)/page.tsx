@@ -13,10 +13,42 @@ import useCurrentUser from "@/hooks/useCurrentUser";
 import useFeedPosts from "@/hooks/useFeedPosts";
 import { LiaUserAltSolid } from "react-icons/lia";
 import Link from "next/link";
+import { useState } from "react";
+import DetailsPostModal from "@/components/modals/DetailsPostModal";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import axios from "axios";
 
 export default function Feed() {
     const { data: currentUser } = useCurrentUser();
     const { data: postsData, mutate: mutateFetchedPosts } = useFeedPosts();
+    const [openDetailsPostModal, setOpenDetailsPostModal] = useState<
+        string | null
+    >(null);
+
+    const getLikePost = (post: any) => {
+        const isLike = post?.likes.find(
+            (item: any) => item.userId === currentUser.id
+        );
+        return isLike;
+    };
+
+    const handleLikePost = async (postId: string) => {
+        await axios.post("/api/likes/create", {
+            postId,
+        });
+        mutateFetchedPosts();
+    };
+
+    const handleUnLikePost = async (id: string) => {
+        if (id) {
+            await axios.delete("/api/likes/delete", {
+                data: {
+                    id: id,
+                },
+            });
+            mutateFetchedPosts();
+        }
+    };
 
     if (!currentUser || !postsData) {
         return (
@@ -32,10 +64,10 @@ export default function Feed() {
 
     return (
         <div className="hidden-scrollbar px-10 py-20 tablet:py-10 h-full flex justify-center overflow-y-auto">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-4 mb-8 pb-8">
                 {postsData.map((post: any) => (
                     <div
-                        className="w-[480px] min-w-[480px] flex flex-col gap-4"
+                        className="tablet:w-[480px] tablet:min-w-[480px] flex flex-col gap-4"
                         key={post.id}
                     >
                         <div className="flex justify-between items-center">
@@ -75,7 +107,7 @@ export default function Feed() {
                             </div>
                             <BsThreeDots className="cursor-pointer text-lg" />
                         </div>
-                        <div className="rounded-lg w-[480px]">
+                        <div className="rounded-lg laptop:w-[480px]">
                             <Image
                                 src={post?.mediaUrl ?? ""}
                                 alt="img-post"
@@ -86,24 +118,48 @@ export default function Feed() {
                         </div>
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-4">
-                                <FiHeart className="cursor-pointer text-2xl hover:text-gray-700/80" />
-                                <GoComment className="cursor-pointer text-2xl hover:text-gray-700/80" />
+                                {getLikePost(post) ? (
+                                    <AiFillHeart
+                                        onClick={() => handleUnLikePost(getLikePost(post)?.id ?? '')}
+                                        className="cursor-pointer text-2xl text-red-500"
+                                    />
+                                ) : (
+                                    <AiOutlineHeart
+                                        onClick={() =>
+                                            handleLikePost(post?.id)
+                                        }
+                                        className="cursor-pointer text-2xl hover:text-gray-700/80"
+                                    />
+                                )}
+
+                                <GoComment
+                                    onClick={() =>
+                                        setOpenDetailsPostModal(post.id)
+                                    }
+                                    className="cursor-pointer text-2xl hover:text-gray-700/80"
+                                />
                                 <VscSend className="cursor-pointer text-2xl hover:text-gray-700/80" />
                             </div>
                             <FiBookmark className="cursor-pointer text-2xl hover:text-gray-700/80" />
                         </div>
-                        <div className="text-sm font-semibold">
+                        <div className="text-sm font-semibold cursor-pointer hover:text-gray-700/80">
                             {post.likes.length} likes
                         </div>
                         <div>
-                            <span className="text-sm font-semibold cursor-pointer hover:text-gray-700/80 mr-2">
+                            <Link
+                                href={`/user/${post?.author?.id}`}
+                                className="text-sm font-semibold cursor-pointer hover:text-gray-700/80 mr-2"
+                            >
                                 {post?.author?.username}
-                            </span>
+                            </Link>
                             <span className="text-sm">{post?.caption}</span>
                         </div>
-                        <span className="text-sm text-gray-900/90 cursor-pointer hover:text-gray-900/70">
+                        <span
+                            onClick={() => setOpenDetailsPostModal(post.id)}
+                            className="text-sm text-gray-900/90 cursor-pointer hover:text-gray-900/70"
+                        >
                             {post?.comments.length > 0
-                                ? "View all 10.000 comments"
+                                ? `View all ${post?.comments.length} comments`
                                 : "No comments yet"}
                         </span>
                         <div className="flex items-center">
@@ -119,7 +175,14 @@ export default function Feed() {
                         <div className="w-full h-[1px] mb-8 border-b"></div>
                     </div>
                 ))}
+                <div className="w-full h-10 tablet:hidden block" />
             </div>
+            {openDetailsPostModal && (
+                <DetailsPostModal
+                    postId={openDetailsPostModal}
+                    setOpen={setOpenDetailsPostModal}
+                />
+            )}
         </div>
     );
 }

@@ -2,12 +2,7 @@
 
 import classNames from "classnames";
 import Image from "next/image";
-import React, {
-    Dispatch,
-    SetStateAction,
-    useRef,
-    useState,
-} from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { MdClose } from "react-icons/md";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -27,11 +22,11 @@ const CreatePostModal: React.FC<PropsType> = ({
 }: PropsType) => {
     const inputFileRef = useRef<any>(null);
     const { mutate: mutateFetchedPosts } = useFeedPosts();
-    const [profileImage, setProfileImage] = useState<string>("");
+    const [image, setImage] = useState<string>("");
     const [caption, setCaption] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
-    const disabledSubmit = profileImage.length === 0;
+    const disabledSubmit = image.length === 0;
 
     const handleClickUploadFile = () => {
         if (inputFileRef.current) {
@@ -53,7 +48,7 @@ const CreatePostModal: React.FC<PropsType> = ({
             );
             if (response.status === 200) {
                 setLoading(false);
-                setProfileImage(response.data.url);
+                setImage(response.data.url);
             }
         }
     };
@@ -62,7 +57,7 @@ const CreatePostModal: React.FC<PropsType> = ({
         setLoading(true);
         await axios.post("/api/posts/create", {
             caption,
-            mediaUrl: profileImage,
+            mediaUrl: image,
         });
         mutateFetchedPosts();
         toast.success("Create new post successfully!");
@@ -74,11 +69,11 @@ const CreatePostModal: React.FC<PropsType> = ({
         <div
             className={classNames(
                 "justify-center items-center fixed top-0 left-0 right-0 z-50 w-full overflow-x-hidden overflow-y-auto md:inset-0 h-full max-h-full bg-neutral-500/20",
-                { ["hidden"]: open === false, ["flex"]: open === true }
+                { ["hidden"]: open === false, ["flex flex-col"]: open === true }
             )}
         >
-            <div className="relative w-full max-w-5xl max-h-full">
-                <div className="relative bg-white rounded-lg shadow">
+            <div className="w-full h-full desktop:w-[1024px] desktop:h-[667px] laptop:w-[768px] laptop:h-[538px] tablet:w-[650px] tablet:h-[480px]">
+                <div className="bg-white rounded-lg shadow w-full h-full">
                     <div className="flex justify-between p-4 border-b rounded-t">
                         <h3 className="text-xl font-semibold text-gray-900">
                             Create new post
@@ -93,18 +88,18 @@ const CreatePostModal: React.FC<PropsType> = ({
                     </div>
                     <div className="flex">
                         <div className="basis-1/2">
-                            <div className="relative flex justify-center items-center w-[500px] h-[500px] max-w-[500px] max-h-[500px]">
-                                {profileImage.length > 0 ? (
+                            <div className="relative flex justify-center items-center tablet:w-[325px] tablet:h-[325px] laptop:w-[384px] laptop:h-[384px] desktop:w-[500px] desktop:h-[500px]">
+                                {image.length > 0 ? (
                                     <Image
-                                        src={profileImage ?? ""}
+                                        src={image ?? ""}
                                         alt="avatar"
                                         className=""
                                         objectFit="cover"
                                         fill
                                     />
                                 ) : (
-                                    <div className="flex flex-col justify-center items-center">
-                                        <LuImagePlus className="text-[160px]" />
+                                    <div className="flex flex-col justify-center items-center w-full">
+                                        <LuImagePlus className="tablet:text-[60px] desktop:text-[160px]" />
                                         <input
                                             ref={inputFileRef}
                                             className="hidden"
@@ -168,7 +163,8 @@ const CreatePostModal: React.FC<PropsType> = ({
                                 {
                                     ["cursor-wait bg-blue-400 hover:bg-blue-400"]:
                                         loading || disabledSubmit,
-                                    ["bg-blue-600 hover:bg-blue-700"]: !loading && !disabledSubmit,
+                                    ["bg-blue-600 hover:bg-blue-700"]:
+                                        !loading && !disabledSubmit,
                                 }
                             )}
                             onClick={() => handleSubmit()}

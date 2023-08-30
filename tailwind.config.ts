@@ -9,14 +9,9 @@ const config: Config = {
     theme: {
         extend: {
             screens: {
-                tablet: "765px",
-                // => @media (min-width: 640px) { ... }
-
+                tablet: "768px",
                 laptop: "1024px",
-                // => @media (min-width: 1024px) { ... }
-
-                desktop: "1265px",
-                // => @media (min-width: 1280px) { ... }
+                desktop: "1280px",
             },
         },
     },

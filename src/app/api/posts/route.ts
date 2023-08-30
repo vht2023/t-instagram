@@ -9,7 +9,11 @@ export async function GET() {
             },
             include: {
                 author: true,
-                comments: true,
+                comments: {
+                    include: {
+                        user: true,
+                    },
+                },
                 likes: true,
             },
             orderBy: {

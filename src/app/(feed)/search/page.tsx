@@ -30,8 +30,6 @@ export default function Profile() {
         );
     }
 
-    console.log(otherUsers);
-
     return (
         <div className="flex flex-col gap-6 w-full h-full">
             <div className="mx-auto w-full text-center font-semibold text-xl">
@@ -40,14 +38,15 @@ export default function Profile() {
             {otherUsers.map((user: any) => (
                 <Link href={`/user/${user.id}`} className="w-full flex gap-3 items-center" key={user.id}>
                     {user.image ? (
-                        <Image
-                            src={user.image ?? ""}
-                            alt="avatar"
-                            className="rounded-full"
-                            objectFit="cover"
-                            width={60}
-                            height={60}
-                        />
+                        <div className="relative w-[60px] h-[60px] max-w-[60px] max-h-[60px] rounded-full">
+                            <Image
+                                src={user.image ?? ""}
+                                alt="avatar"
+                                className="rounded-full"
+                                objectFit="cover"
+                               fill
+                            />
+                        </div>
                     ) : (
                         <HiOutlineUserCircle className="text-[64px]" />
                     )}

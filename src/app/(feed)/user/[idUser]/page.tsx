@@ -4,7 +4,7 @@ import useUser from "@/hooks/useUser";
 import { usePathname } from "next/navigation";
 import HashLoader from "react-spinners/ClipLoader";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import classNames from "classnames";
 import { VscDebug } from "react-icons/vsc";
 import EditProfileUserModal from "@/components/modals/EditProfileUserModal";
@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import useUserPost from "@/hooks/useUserPost";
 import { AiFillHeart } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
+import DetailsPostModal from "@/components/modals/DetailsPostModal";
 
 export default function Profile() {
     const pathname = usePathname();
@@ -25,6 +26,9 @@ export default function Profile() {
     const [disabledButton, setDisabledButton] = useState(false);
     const [loading, setLoading] = useState<string | null>(null);
     const [viewState, setViewState] = useState<string>("POSTS");
+    const [openDetailsPostModal, setOpenDetailsPostModal] = useState<
+        string | null
+    >(null);
 
     const { data: currentUser, mutate: mutateFetchedCurentUser } =
         useCurrentUser();
@@ -136,6 +140,7 @@ export default function Profile() {
         }
         setDisabledButton(false);
         setLoading(null);
+        setOpenDetailsPostModal(null);
     }, [currentUser, userData]);
 
     if (!userData) {
@@ -323,10 +328,10 @@ export default function Profile() {
 
     return (
         <>
-            <div className="flex flex-col tablet:w-[650px] tablet:max-w-[650px] desktop:w-[908px] desktop:max-w-[908px] overflow-x-hidden">
-                <div className="flex justify-center desktop:gap-40 tablet:gap-20">
+            <div className="flex flex-col tablet:w-[650px] tablet:max-w-[650px] desktop:w-[908px] desktop:max-w-[908px] w-full h-full overflow-x-hidden hidden-scrollbar">
+                <div className="flex tablet:flex-row flex-col tablet:justify-center items-center desktop:gap-40 tablet:gap-20 gap-4">
                     {userData.image ? (
-                        <div className="relative w-[150px] h-[150px] max-w-[150px] max-h-[150px] rounded-full">
+                        <div className="relative tablet:w-[150px] tablet:h-[150px] w-[100px] h-[100px] rounded-full">
                             <Image
                                 src={userData.image ?? ""}
                                 alt="avatar"
@@ -339,11 +344,14 @@ export default function Profile() {
                         <LiaUserAltSolid className="text-[150px]" />
                     )}
 
-                    <div className="flex flex-col gap-6 w-[360px]">
-                        <div className="flex justify-between items-center">
+                    <div className="flex flex-col gap-6 tablet:w-[360px] w-full">
+                        <div className="flex justify-between items-center tablet:flex-row flex-col gap-4">
                             <span className="desktop:text-xl cursor-pointer font-medium">
                                 {userData?.username ?? "[no_username]"}
                             </span>
+                            <div className="tablet:hidden block font-light text-sm">
+                                {userData?.bio ?? "[...no bio]"}
+                            </div>
                             {userData && currentUser && userButtonActions()}
                         </div>
                         <div className="flex justify-between items-center">
@@ -369,17 +377,17 @@ export default function Profile() {
                                 <span className="ml-1">following</span>
                             </div>
                         </div>
-                        <div className="font-light text-sm">
+                        <div className="hidden tablet:block font-light text-sm">
                             {userData?.bio ?? "[...no bio]"}
                         </div>
                     </div>
                 </div>
-                <div className="border-b w-full h-[1px] mt-12" />
+                <div className="border-b w-full h-[1px] tablet:mt-12 mt-6" />
                 <div className="flex justify-center items-center gap-10 text-sm text-zinc-500 font-medium">
                     <span
                         onClick={() => setViewState("POSTS")}
                         className={classNames(
-                            "hover:text-black py-4 px-2 cursor-pointer",
+                            "hover:text-black tablet:py-4 py-2 px-2 cursor-pointer",
                             {
                                 ["text-black border-t-2 border-black"]:
                                     viewState === "POSTS",
@@ -392,7 +400,7 @@ export default function Profile() {
                         <span
                             onClick={() => setViewState("SAVED")}
                             className={classNames(
-                                "hover:text-black py-4 px-2",
+                                "hover:text-black tablet:py-4 py-2 px-2",
                                 {
                                     ["text-black border-t-2 border-black"]:
                                         viewState === "SAVED",
@@ -403,7 +411,7 @@ export default function Profile() {
                         </span>
                     )}
                 </div>
-                {isPrivateUser ? (
+                {isPrivateUser && currentUser?.id !== userData?.id ? (
                     <div className="flex flex-col gap-6 w-full justify-center items-center mt-20 font-semibold">
                         <span>This Account is Private</span>
                         <span>Follow to see their posts.</span>
@@ -426,29 +434,32 @@ export default function Profile() {
                         <span className="sr-only">Loading...</span>
                     </div>
                 ) : userPosts?.length > 0 ? (
-                    <div className="w-full h-full">
+                    <div className="w-full h-full tablet:mb-8 mb-20">
                         <div className="grid grid-cols-3 gap-1 w-full h-full overflow-x-hidden">
                             {userPosts &&
                                 userPosts.map((post: any) => (
                                     <div
                                         key={post.id}
-                                        className="relative tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px]"
+                                        className="relative tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px] w-full h-[calc(100%/3)]"
+                                        onClick={() =>
+                                            setOpenDetailsPostModal(post.id)
+                                        }
                                     >
-                                        <div className="post-hover cursor-pointer absolute top-0 left-0 z-10 hover:bg-gray-700/30 flex gap-6 justify-center items-center tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px]">
+                                        <div className="post-hover cursor-pointer absolute top-0 left-0 z-10 hover:bg-gray-900/30 flex gap-6 justify-center items-center tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px] w-full h-full">
                                             <div className="hidden z-10 hover:flex justify-center items-center">
                                                 <AiFillHeart className="text-white text-2xl" />
                                                 <span className="ml-1 text-white text-xl font-semibold">
-                                                    {post.comments.length}
+                                                    {post.likes.length}
                                                 </span>
                                             </div>
                                             <div className="hidden z-10 hover:flex justify-center items-center">
                                                 <FaCommentAlt className="text-white text-[20px]" />
                                                 <span className="ml-1 text-white text-xl font-semibold">
-                                                    {post.likes.length}
+                                                    {post.comments.length}
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="relative tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px]">
+                                        <div className="relative tablet:w-[214px] tablet:h-[214px] desktop:w-[300px] desktop:h-[300px] w-full h-full">
                                             <Image
                                                 src={post.mediaUrl}
                                                 alt="post-img"
@@ -474,6 +485,12 @@ export default function Profile() {
                     userData={userData}
                     open={openEditProfileModal}
                     setOpen={setOpenEditProfileModal}
+                />
+            )}
+            {openDetailsPostModal && (
+                <DetailsPostModal
+                    postId={openDetailsPostModal}
+                    setOpen={setOpenDetailsPostModal}
                 />
             )}
         </>

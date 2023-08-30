@@ -1,17 +1,18 @@
 import prisma from "@/app/libs/prismadb";
 import { NextResponse } from "next/server";
 
-export async function DELETE(_: Request, context: { params: any }) {
+export async function DELETE(request: Request) {
     try {
-        const { notiId } = context.params;
+        const body = await request.json();
+        const { id } = body;
 
-        if (!notiId || typeof notiId !== "string") {
+        if (!id || typeof id !== "string") {
             throw new Error("Invalid ID");
         }
 
-        await prisma.notification.delete({
+        await prisma.like.delete({
             where: {
-                id: notiId,
+                id: id,
             },
         });
 

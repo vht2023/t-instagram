@@ -12,6 +12,15 @@ export async function GET(_: Request, context: { params: any }) {
             where: {
                 id: postId,
             },
+            include: {
+                author: true,
+                comments: {
+                    include: {
+                        user: true,
+                    },
+                },
+                likes: true,
+            },
         });
 
         return NextResponse.json(existingPost);
